@@ -1,14 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Single from './Single';
+import Penta from './Penta';
 import reportWebVitals from './reportWebVitals';
+import { HashRouter as Router, useRoutes } from "react-router-dom";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+
+const Pages = () => useRoutes([
+  { path: "/single", element: <Single />},
+  { path: "/penta", element: <Penta />},
+])
+
+
+ReactDOM.render(
+  <Router basename={process.env.PUBLIC_URL}>
+    <Pages />
+  </Router>,
+  
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

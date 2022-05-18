@@ -73,6 +73,8 @@ const selected =
 
 function Penta(){
     const [dataName, setDataName] = useState(dataNames[0]);
+
+    const [showMetric, setShowMetric] = useState(false);
     
     const x = 'metric'
     const metricData = require(`/public/data/${x}_some.json`);
@@ -216,14 +218,25 @@ function Penta(){
     return(
         <Grommet theme={theme}>
         <Box alignContent='center'>
+            <Box style={{"display": "inline-block"}}>
         <Select
+        style={{"display": "inline-block"}}
             options={dataNames}
             value={dataName}
             onChange={({ option }) => setDataName(option)}
           />  
+          <Button
+            as='div'
+            size='large'
+            fill='vertical'
+            primary
+            style={{"display": "inline-block"}} 
+            onClick={() => {setShowMetric(!showMetric)}}
+            label={showMetric ? 'Metric 숨기기' : 'Metric 보기'}></Button>
+          </Box>
         <Grid
       alignSelf='center'
-  columns={['flex', ['small', 'medium']]}
+  columns={[['large', 'large'], ['small', 'medium']]}
   rows={['100%']}
   gap="small"
   areas={[
@@ -264,6 +277,8 @@ gridArea="info" background="light-2" style={{margin: "10px 0 0 0"}}>
   
   </Box>
   <DataTable gridArea='main'
+  alignSelf='start'
+  alignContent='start'
             fill="vertical"
             style={{margin:'auto'}}
             sortable
@@ -274,14 +289,25 @@ gridArea="info" background="light-2" style={{margin: "10px 0 0 0"}}>
 
             data={selected[dataName].map(((projectionIdx, num) => {
                 const key = dataName + "_" + projectionIdx;
-                let metricValue = metricData[key];
-                Object.entries(metricValue).forEach(([key, value]) => {
-                    metricValue[key] = Math.round(value * 1000) / 1000;
-                });
+                const metricValue = metricData[key];
+                let newMetricValue = {};
+
+                if (showMetric) {
+                    Object.entries(metricValue).forEach(([key, value]) => {
+                        newMetricValue[key] = Math.round(value * 1000) / 1000;
+                    });
+                }
+                else {
+                    Object.keys(metricValue).forEach((key) => {
+                        newMetricValue[key] = '';
+                    });
+
+                }
+                
 
 
                 return({
-                        ...metricValue,
+                        ...newMetricValue,
                         number: num,
                         projection: (
                                 <Image

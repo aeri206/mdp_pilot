@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Single from './Single';
 import Penta from './Penta';
+import Sort from './Sort';
 import reportWebVitals from './reportWebVitals';
 import { HashRouter as Router, useRoutes } from "react-router-dom";
 
@@ -10,6 +11,8 @@ import { HashRouter as Router, useRoutes } from "react-router-dom";
 const Pages = () => useRoutes([
   { path: "/single", element: <Single />},
   { path: "/penta", element: <Penta />},
+  { path: "/sort", element: <Sort />},
+
 ])
 
 

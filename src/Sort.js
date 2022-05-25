@@ -73,6 +73,7 @@ const info = {
   
 
 
+
 const Sort = () => {
     
     const [dataName, setDataName] = useState(dataNames[0]);
@@ -80,8 +81,8 @@ const Sort = () => {
     const datasetInfo = info[dataName]
     
     const x = 'metric'
-    const metricData = require(`/public/data/${x}_some.json`);
-    
+    const metricData = require(`/public/data/${x}_all.json`);
+    console.log(metricData)
     const [users, setUsers] = useState(selected[dataName]);
 
     const handleDragEnd = (e) => {
@@ -93,7 +94,7 @@ const Sort = () => {
     };
 
     
-    const round = val => Math.round(val * 1000) / 1000;
+    const round = val => Math.round(val * 10000) / 10000;
     
   return (
     <Grommet>
@@ -110,7 +111,7 @@ const Sort = () => {
           </Box>
           <Grid
       alignSelf='center'
-  columns={[['large', 'large'], ['auto', 'large']]}
+  columns={[['large', 'auto'], ['auto', 'large']]}
   rows={['auto', 'flex']}
   gap="small"
   areas={[
@@ -127,9 +128,17 @@ const Sort = () => {
               <TableCell/>
               <TableCell>Num</TableCell>
               <TableCell>Projection</TableCell>
-              <TableCell>Trustworthiness</TableCell>
-              <TableCell>Cohesiveness</TableCell>
-              <TableCell>DTM_KL01</TableCell>
+              <TableCell>
+                F1 score of <br/> 
+                Trustworthiness & <br />
+                Continuity
+              </TableCell>
+              <TableCell>
+                F1 score of <br/> 
+                Steadiness & <br />
+                Cohesiveness
+              </TableCell>
+              <TableCell>DTM (KL01)</TableCell>
             </TableRow>
           </TableHeader>
           <Droppable droppableId="droppable-1">
@@ -146,7 +155,20 @@ const Sort = () => {
                     draggableId={num}
                     index={index}
                   >
-                    {(provider) => (
+                    {(provider) => {
+                      let t = parseFloat(metricData[`${dataName}_${num}`]['Trustworthiness']); 
+                      let c = parseFloat(metricData[`${dataName}_${num}`]['Continuity']);
+                      let precision = t
+                      let recall = t / (t + 1 - c)
+                      let f1 = 2 * precision * recall / (precision + recall)
+
+                      let st = parseFloat(metricData[`${dataName}_${num}`]['Steadiness']); 
+                      let ch = parseFloat(metricData[`${dataName}_${num}`]['Cohesiveness']);
+                      let precision_st = st
+                      let recall_st = st / (st + 1 - ch)
+                      let f1_st = 2 * precision_st * recall_st / (precision_st + recall_st)
+                      
+                      return(
                       <TableRow {...provider.draggableProps} ref={provider.innerRef}>
                         <TableCell {...provider.dragHandleProps}>:::::</TableCell>
                         <TableCell border="bottom">{num}</TableCell>
@@ -155,11 +177,12 @@ const Sort = () => {
                                     fit="contain"
                                     src={`${process.env.PUBLIC_URL}/penta-img/${dataName}_${num}.jpeg`}
                                 />}</TableCell>
-                        <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['Trustworthiness'])}</TableCell>
-                        <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['Cohesiveness'])}</TableCell>
+                        <TableCell border="bottom">{round(f1)}</TableCell>
+                        <TableCell border="bottom">{round(f1_st)}</TableCell>
                         <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['DTM_KL01'])}</TableCell>
                       </TableRow>
-                    )}
+                    )
+                    }}
                   </Draggable>
 
 
@@ -179,23 +202,22 @@ const Sort = () => {
   데이터의 기본적인 정보는 아래와 같습니다.
 
   <Paragraph margin='5px 0 0 5px'>
-      {datasetInfo['dim']} dimension
+      {datasetInfo['dim']} 차원
       </Paragraph>
       <Paragraph margin='5px 0 0 5px'>
-    {datasetInfo['row']} row (data point)
+    {datasetInfo['row']} 개의 data point
     </Paragraph>
     
     <Paragraph margin='5px 0 20px 5px'>
     {datasetInfo['class']} class (label)
   </Paragraph>
 
-  왼쪽에는 이 데이터에 대한 5개의 projection과 각각의 projection metric이 제시되어 있습니다. 
+  왼쪽에는 이 데이터에 대한 5개의 projection과 각각의 evaluation metric이 제시되어 있습니다. 
     
   <p/>
   데이터 분석에 projection 전체를 사용하거나, 유용한 결론을 도출할 수 있는 projection을 선택적으로 사용할 수 있습니다. 
   
-  <b>이 projection을 보고 데이터 분석에 가장 유용할 것 같다고 판단되는 순서대로 각 열(Row)을 나열하세요.</b>
-  <p/>
+  <p><b>이 projection을 보고 데이터 분석에 가장 유용할 것 같다고 판단되는 순서대로 각 열(Row)을 나열하세요.</b></p>
   가장 유용하다고 판단한 기준과 가장 유용하지 않다고 판단한 기준은 무엇입니까? 
 
   
@@ -209,6 +231,8 @@ const Sort = () => {
   secondaryKey={(item) => <Paragraph>{item.description}</Paragraph>}
   data={[
     { name: 'Trustworthiness', description: '고차원에서의 local한 이웃구조가 저차원에서 잘 보존 (높을수록 좋다, 잘 보존한다)' },
+    { name: 'Continuity', description: '저차원에서 local한 이웃구조가 고차원에서 잘 보존 (높을수록 좋다, 잘 보존한다)' },
+    { name: 'Steadiness', description: '고차원과 저차원간의 inter-cluster reliability, 고차원의 cluster가 projection 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
     { name: 'Cohesiveness', description: '고차원과 저차원간의 inter-cluster reliability, projection의 cluster가 고차원에서 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
     { name: 'DTM_KL01', description: 'HD - LD사이의 분포의 차이, global structure를 얼마나 잘 보존하였는가 (낮을수록 좋다)' },
   ]}

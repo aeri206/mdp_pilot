@@ -138,7 +138,10 @@ const Sort = () => {
                 Steadiness & <br />
                 Cohesiveness
               </TableCell>
-              <TableCell>DTM (KL01)</TableCell>
+              <TableCell>
+                KL divergence <br />
+                σ = 0.01
+              </TableCell>
             </TableRow>
           </TableHeader>
           <Droppable droppableId="droppable-1">
@@ -179,7 +182,7 @@ const Sort = () => {
                                 />}</TableCell>
                         <TableCell border="bottom">{round(f1)}</TableCell>
                         <TableCell border="bottom">{round(f1_st)}</TableCell>
-                        <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['DTM_KL01'])}</TableCell>
+                        <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['DTM_KL001'])}</TableCell>
                       </TableRow>
                     )
                     }}
@@ -234,7 +237,7 @@ const Sort = () => {
     { name: 'Continuity', description: '저차원에서 local한 이웃구조가 고차원에서 잘 보존 (높을수록 좋다, 잘 보존한다)' },
     { name: 'Steadiness', description: '고차원과 저차원간의 inter-cluster reliability, 고차원의 cluster가 projection 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
     { name: 'Cohesiveness', description: '고차원과 저차원간의 inter-cluster reliability, projection의 cluster가 고차원에서 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
-    { name: 'DTM_KL01', description: 'HD - LD사이의 분포의 차이, global structure를 얼마나 잘 보존하였는가 (낮을수록 좋다)' },
+    { name: 'DTM_KL001', description: 'HD - LD사이의 분포의 차이, global structure를 얼마나 잘 보존하였는가 (낮을수록 좋다)' },
   ]}
 />
     

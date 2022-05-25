@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/mdp_pilot/static/css/main.073c9b0a.css",
-    "main.js": "/mdp_pilot/static/js/main.0407c90b.js",
+    "main.js": "/mdp_pilot/static/js/main.b0dc0faf.js",
     "static/js/787.d0099931.chunk.js": "/mdp_pilot/static/js/787.d0099931.chunk.js",
     "index.html": "/mdp_pilot/index.html",
     "main.073c9b0a.css.map": "/mdp_pilot/static/css/main.073c9b0a.css.map",
-    "main.0407c90b.js.map": "/mdp_pilot/static/js/main.0407c90b.js.map",
+    "main.b0dc0faf.js.map": "/mdp_pilot/static/js/main.b0dc0faf.js.map",
     "787.d0099931.chunk.js.map": "/mdp_pilot/static/js/787.d0099931.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.0407c90b.js"
+    "static/js/main.b0dc0faf.js"
   ]
 }

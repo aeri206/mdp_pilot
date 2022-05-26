@@ -1,7 +1,7 @@
 // // @ts-nocheck
 import React, {useState } from "react";
 
-import { Grommet, Grid, Table, TableHeader, TableRow, TableBody, TableCell, Select, List, DataTable, Box, Image, Page, PageContent, Button, Paragraph } from 'grommet';
+import { Grommet, Grid, Table, TableHeader, Text, TableRow, TableBody, TableCell, Select, List, DataTable, Box, Image, Page, PageContent, Button, Paragraph } from 'grommet';
 
 
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -27,6 +27,38 @@ const dataNames = [
     'wine',
     'world12d'
 ]
+
+const dataReplace = {
+  'boston': 'o1',
+  'breastcancercoimbra' : 'r1',
+  'breastcancerwisconsinprognostic' : 'r2',
+  'ecoli' : 'c1',
+  'extyaleb' : 'x2',
+  'glassidentification' : 'l1',
+  'heartdisease' : 'e1',
+  'hepatitis': 'e2',
+  'iris' : 'r3',
+  'olive': 'l2',
+  'weather': 'e3',
+  'wine': 'i1',
+  'world12d': 'o2'
+}
+
+const dataOrigin = {
+  "o1": "boston",
+  "r1": "breastcancercoimbra",
+  "r2": "breastcancerwisconsinprognostic",
+  "c1": "ecoli",
+  "x2": "extyaleb",
+  "l1": "glassidentification",
+  "e1": "heartdisease",
+  "e2": "hepatitis",
+  "r3": "iris",
+  "l2": "olive",
+  "e3": "weather",
+  "i1": "wine",
+  "o2": "world12d"
+}
 
 const selected = 
 {
@@ -82,7 +114,6 @@ const Sort = () => {
     
     const x = 'metric'
     const metricData = require(`/public/data/${x}_all.json`);
-    console.log(metricData)
     const [users, setUsers] = useState(selected[dataName]);
 
     const handleDragEnd = (e) => {
@@ -101,9 +132,10 @@ const Sort = () => {
         <Box style={{"display": "inline-block"}}>
         <Select
         style={{"display": "inline-block"}}
-            options={dataNames}
-            value={dataName}
+            options={dataNames.map(x => dataReplace[x])}
+            value={dataReplace[dataName]}
             onChange={({ option }) => {
+              option = dataOrigin[option]
                 setUsers(selected[option]);
                 setDataName(option);
             }}
@@ -131,16 +163,19 @@ const Sort = () => {
               <TableCell>
                 F1 score of <br/> 
                 Trustworthiness & <br />
-                Continuity
+                Continuity <br />
+                (높을수록 좋다)
               </TableCell>
               <TableCell>
                 F1 score of <br/> 
                 Steadiness & <br />
-                Cohesiveness
+                Cohesiveness <br />
+                (높을수록 좋다)
               </TableCell>
               <TableCell>
                 KL divergence <br />
-                σ = 0.01
+                σ = 0.01 <br />
+                (낮을수록 좋다)
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -200,7 +235,7 @@ const Sort = () => {
     </Box>
     <Box gridArea="instruction" 
       height={{ min: "small", max: "large" }}
-      background="light-2" style={{margin: "5px 0 10px 0", padding: "20px 0 10px 10px"}}>
+      background="light-2" style={{margin: "5px 0 10px 0", padding: "20px 0 20px 10px"}}>
   당신은 데이터를 차원 축소 기법을 이용하여 분석하려고 합니다.
   데이터의 기본적인 정보는 아래와 같습니다.
 
@@ -229,15 +264,36 @@ const Sort = () => {
     background="light-2" 
   >
     <List
+    as="ul"
     border="horizontal"
-  primaryKey="name"
-  secondaryKey={(item) => <Paragraph>{item.description}</Paragraph>}
+  primaryKey={(item) => <Paragraph style={{"minWidth": "10%", "maxWidth": "150px"}}>{item.name}</Paragraph>}
+  secondaryKey={(item) => <Box style={{"textAlign":"left", "width": "70%"}}>{item.description}</Box>}
   data={[
-    { name: 'Trustworthiness', description: '고차원에서의 local한 이웃구조가 저차원에서 잘 보존 (높을수록 좋다, 잘 보존한다)' },
-    { name: 'Continuity', description: '저차원에서 local한 이웃구조가 고차원에서 잘 보존 (높을수록 좋다, 잘 보존한다)' },
-    { name: 'Steadiness', description: '고차원과 저차원간의 inter-cluster reliability, 고차원의 cluster가 projection 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
-    { name: 'Cohesiveness', description: '고차원과 저차원간의 inter-cluster reliability, projection의 cluster가 고차원에서 얼마나 잘 보존하였는가 (높을수록 좋다, 잘 보존한다)' },
-    { name: 'DTM_KL001', description: 'HD - LD사이의 분포의 차이, global structure를 얼마나 잘 보존하였는가 (낮을수록 좋다)' },
+    { name: 
+      <>
+      Trustworthiness & <br/>
+      Continuity<br/>
+      </>, description: 
+      <>
+      데이터의 local한 이웃구조가 잘 보존된 정도 <br />
+      (높을수록 좋다 (1에 가까울수록), 잘 보존한다)
+      </> },
+      { name: 
+        <>
+        Steadiness & <br/>
+        Cohesiveness<br/>
+        </>, description: 
+        <>
+        데이터의 cluster 구조가 잘 보존된 정도 <br />
+        inter-cluster reliability <br />
+        (높을수록 좋다 (1에 가까울수록), 잘 보존한다)
+        </> },
+    { name: 'KL divergence', description: 
+    <> 
+    고차원의 global structure가 잘 보존된 정도 <br />
+    (낮을수록 (0에 가까울수록) 좋다, 잘 보존한다)
+    </>
+    },
   ]}
 />
     

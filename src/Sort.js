@@ -7,11 +7,6 @@ import { Grommet, Grid, Table, TableHeader, Text, TableRow, TableBody, TableCell
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 
-
-
-  
-  
-
 const dataNames = [
     'boston',
     'breastcancercoimbra',
@@ -126,10 +121,26 @@ const Sort = () => {
 
     
     const round = val => Math.round(val * 10000) / 10000;
+
+    
     
   return (
     <Grommet>
-        <Box style={{"display": "inline-block"}}>
+          <Grid
+          pad="10px"
+      alignSelf='center'
+  columns={[['large', 'auto'], ['auto', 'large']]}
+  rows={['auto', 'auto', 'flex']}
+  gap="small"
+  areas={[
+    { name: 'main', start: [0, 0], end: [0, 2] },
+    { name: 'select', start: [1, 0], end: [1, 0] },
+    { name: 'instruction', start: [1, 1], end: [1, 1] },
+    { name: 'metric-info', start: [1, 2], end: [1, 2] },
+  ]}
+>
+<Box gridArea="select" style={{"display": "inline-block"}}>
+  <Text> dataset: </Text>
         <Select
         style={{"display": "inline-block"}}
             options={dataNames.map(x => dataReplace[x])}
@@ -141,17 +152,6 @@ const Sort = () => {
             }}
           />
           </Box>
-          <Grid
-      alignSelf='center'
-  columns={[['large', 'auto'], ['auto', 'large']]}
-  rows={['auto', 'flex']}
-  gap="small"
-  areas={[
-    { name: 'main', start: [0, 0], end: [0, 1] },
-    { name: 'instruction', start: [1, 0], end: [1, 0] },
-    { name: 'metric-info', start: [1, 1], end: [1, 1] },
-  ]}
->
   <Box gridArea="main">
       <DragDropContext onDragEnd={handleDragEnd}>
         <Table className="table borderd">
@@ -208,16 +208,16 @@ const Sort = () => {
                       
                       return(
                       <TableRow {...provider.draggableProps} ref={provider.innerRef}>
-                        <TableCell {...provider.dragHandleProps}>:::::</TableCell>
-                        <TableCell border="bottom">{num}</TableCell>
-                        <TableCell border="bottom">{<Image
+                        <TableCell pad='none' {...provider.dragHandleProps}>:::::</TableCell>
+                        <TableCell pad='none' border="bottom">{selected[dataName].indexOf(num)}</TableCell>
+                        <TableCell pad='none' border="bottom">{<Image
                                     width={'200px'}
                                     fit="contain"
                                     src={`${process.env.PUBLIC_URL}/penta-img/${dataName}_${num}.jpeg`}
                                 />}</TableCell>
-                        <TableCell border="bottom">{round(f1)}</TableCell>
-                        <TableCell border="bottom">{round(f1_st)}</TableCell>
-                        <TableCell border="bottom">{round(metricData[`${dataName}_${num}`]['DTM_KL001'])}</TableCell>
+                        <TableCell pad='none' border="bottom">{round(f1)}</TableCell>
+                        <TableCell pad='none' border="bottom">{round(f1_st)}</TableCell>
+                        <TableCell pad='none' border="bottom">{round(metricData[`${dataName}_${num}`]['DTM_KL001'])}</TableCell>
                       </TableRow>
                     )
                     }}
@@ -235,28 +235,37 @@ const Sort = () => {
     </Box>
     <Box gridArea="instruction" 
       height={{ min: "small", max: "large" }}
-      background="light-2" style={{margin: "5px 0 10px 0", padding: "20px 0 20px 10px"}}>
+      background="light-2" style={{margin: "5px 0 10px 0", padding: "20px  20px 10px"}}>
   당신은 데이터를 차원 축소 기법을 이용하여 분석하려고 합니다.
+  <br/>
+  <br/>
   데이터의 기본적인 정보는 아래와 같습니다.
 
-  <Paragraph margin='5px 0 0 5px'>
+  <Page width="small" margin="10px 0 0 0">
+  <PageContent background="light-4">
+  <Paragraph margin='20px 0 0 0'>
       {datasetInfo['dim']} 차원
       </Paragraph>
-      <Paragraph margin='5px 0 0 5px'>
+      <Paragraph margin='5px 0 0 0'>
     {datasetInfo['row']} 개의 data point
     </Paragraph>
     
-    <Paragraph margin='5px 0 20px 5px'>
+    <Paragraph margin='5px 0 20px 0'>
     {datasetInfo['class']} class (label)
   </Paragraph>
-
-  왼쪽에는 이 데이터에 대한 5개의 projection과 각각의 evaluation metric이 제시되어 있습니다. 
-    
-  <p/>
-  데이터 분석에 projection 전체를 사용하거나, 유용한 결론을 도출할 수 있는 projection을 선택적으로 사용할 수 있습니다. 
+  </PageContent>
+</Page>
   
-  <p><b>이 projection을 보고 데이터 분석에 가장 유용할 것 같다고 판단되는 순서대로 각 열(Row)을 나열하세요.</b></p>
-  가장 유용하다고 판단한 기준과 가장 유용하지 않다고 판단한 기준은 무엇입니까? 
+  <p>왼쪽에는 이 데이터에 대한 5개의 projection과 각각의 evaluation metric이 제시되어 있습니다. </p>
+  
+  <p>
+    <b>
+      이 projection을 보고 데이터 분석에 가장 유용할 것 같다고 판단되는 순서대로 각 열(Row)을 나열하세요.<br/>
+      자유롭게 위, 아래로 움직이면서 순위를 정하고, projection을 이동한 이유를 설명해주세요.
+    </b>
+  </p>
+  
+  <p>가장 유용하다고 판단한 기준과 가장 유용하지 않다고 판단한 기준은 무엇입니까? </p>
 
   
   </Box>
